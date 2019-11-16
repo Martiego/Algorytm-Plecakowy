@@ -23,5 +23,10 @@ public class App extends Application {
         for (int i: tab) {
             System.out.println(i);
         }
+        knapsack.decrypt();
+        byte[] tabByte = knapsack.getDecipherText();
+        for(byte b: tabByte) {
+            System.out.print(b);
+        }
     }
 }

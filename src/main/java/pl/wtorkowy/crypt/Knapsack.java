@@ -8,8 +8,9 @@ public class Knapsack {
     private char[] text;
     private byte[] textByte;
     private int[] cipherText;
+    private byte[] decipherText;
 
-    int n, m;
+    int n, m, reverseN;
 
     public Knapsack() {
 //        text = new char[] {'c', 'i', 'e', 'k', 'a', 'w', 'e'};
@@ -18,6 +19,7 @@ public class Knapsack {
         publicKey = new int[privateKey.length];
         n = 31;
         m = 105;
+        reverseN = reverseN(n, m);
     }
 
     public void encrypt() {
@@ -33,11 +35,42 @@ public class Knapsack {
         }
     }
 
+    public void decrypt() {
+        int tmp = 0;
+        int length = privateKey.length;
+        byte[] tmpByte = new byte[length];
+        decipherText = new byte[textByte.length];
+        for(int i = 0; i < textByte.length/length; i++) {
+            tmp = (cipherText[i]*reverseN)%m;
+            for (int j = length - 1; j >= 0; j--) {
+                if(privateKey[j] > tmp) {
+                    tmpByte[j] = 0;
+                }
+                else {
+                    tmp -= privateKey[j];
+                    tmpByte[j] = 1;
+                }
+            }
+            System.arraycopy(tmpByte, 0, decipherText, i * length, length);
+        }
+    }
+
+    public int reverseN(int n, int m) {
+        for(int i = 0; i < m; i++) {
+            if (((n*i)%m)==1) return (i);
+        }
+        return 0;
+    }
+
 
     public void generatePublicKey() {
         for (int i = 0; i < privateKey.length; i++) {
             publicKey[i] = (privateKey[i] * n) % m;
         }
+    }
+
+    public byte[] getDecipherText() {
+        return decipherText;
     }
 
     public int[] getCipherText() {
