@@ -1,5 +1,8 @@
 package pl.wtorkowy.cast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ToTab {
 
     public static char[] toCharTab(String text) {
@@ -29,8 +32,8 @@ public class ToTab {
     }
 
     public static int[] toIntegerTab(char[] block) {
-        int[] blockInt = new int[8];
-        for (int i = 0; i < 8; i++) { blockInt[i] = block[i]; }
+        int[] blockInt = new int[block.length];
+        for (int i = 0; i < block.length; i++) { blockInt[i] = block[i]; }
 
         return blockInt;
     }
@@ -108,6 +111,24 @@ public class ToTab {
         first = first.substring(0, i+1);
 
         return first + name;
+    }
+
+    public static int[] toIntTab(String s) {
+        List<Integer> list = new ArrayList<>();
+        int tmp = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if(s.charAt(i) == ',') {
+                list.add(Integer.parseInt(s.substring(tmp, i)));
+                tmp = i+1;
+            }
+        }
+        list.add(Integer.parseInt(s.substring(tmp)));
+        int[] result = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            result[i] = list.get(i);
+        }
+
+        return result;
     }
 
 }

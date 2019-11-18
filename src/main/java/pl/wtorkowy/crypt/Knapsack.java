@@ -2,27 +2,26 @@ package pl.wtorkowy.crypt;
 
 import pl.wtorkowy.cast.ToTab;
 
+import java.util.Arrays;
+
 public class Knapsack {
     private int[] privateKey;
     private int[] publicKey;
-    private char[] text;
-    private byte[] textByte;
     private int[] cipherText;
     private byte[] decipherText;
 
-    int n, m, reverseN;
+    private int n, m, reverseN;
 
-    public Knapsack() {
-//        text = new char[] {'c', 'i', 'e', 'k', 'a', 'w', 'e'};
-        textByte = new byte[] {0,1,1,0,0,0,1,1,0,1,0,1,1,0,1,1,1,0};
-        privateKey = new int[] {2, 3, 6, 13, 27, 52};
+    public Knapsack(int[] privateKey, int n, int m) {
+        this.privateKey = privateKey;
         publicKey = new int[privateKey.length];
-        n = 31;
-        m = 105;
+        this.n = n;
+        this.m = m;
         reverseN = reverseN(n, m);
+        generatePublicKey();
     }
 
-    public void encrypt() {
+    public void encrypt(byte[] textByte) {
         int tmp = 0;
         cipherText = new int[textByte.length/publicKey.length];
         for(int i = 0; i < textByte.length/publicKey.length; i++) {
@@ -35,12 +34,12 @@ public class Knapsack {
         }
     }
 
-    public void decrypt() {
+    public void decrypt(int[] cipherText) {
         int tmp = 0;
         int length = privateKey.length;
         byte[] tmpByte = new byte[length];
-        decipherText = new byte[textByte.length];
-        for(int i = 0; i < textByte.length/length; i++) {
+        decipherText = new byte[length*cipherText.length];
+        for(int i = 0; i < cipherText.length; i++) {
             tmp = (cipherText[i]*reverseN)%m;
             for (int j = length - 1; j >= 0; j--) {
                 if(privateKey[j] > tmp) {
@@ -73,11 +72,23 @@ public class Knapsack {
         return decipherText;
     }
 
+    public String getDecipherTextString() {
+        return new String(ToTab.toCharTab(ToTab.toIntTab(decipherText)));
+    }
+
     public int[] getCipherText() {
         return cipherText;
     }
 
-    public int[] getPublicKey() {
-        return publicKey;
+    public String getCipherTextString() {
+        return Arrays.toString(cipherText);
+    }
+
+    public String getPublicKey() {
+        return Arrays.toString(publicKey);
+    }
+
+    public int getCipherTextInt() {
+        return cipherText[0];
     }
 }
