@@ -11,6 +11,7 @@ public class Knapsack {
     private byte[] decipherText;
 
     private int n, m, reverseN;
+    private boolean superIncreasing;
 
     public Knapsack(int[] privateKey, int n, int m) {
         this.privateKey = privateKey;
@@ -19,18 +20,24 @@ public class Knapsack {
         this.m = m;
         reverseN = reverseN(n, m);
         generatePublicKey();
+        superIncreasing = checkSuperIncreasing();
     }
 
     public void encrypt(byte[] textByte) {
-        int tmp = 0;
-        cipherText = new int[textByte.length/publicKey.length];
-        for(int i = 0; i < textByte.length/publicKey.length; i++) {
-            for (int j = 0; j < publicKey.length; j++) {
-                if(textByte[i*publicKey.length + j] == 1)
-                    tmp += publicKey[j];
+        if(superIncreasing) {
+            int tmp = 0;
+            cipherText = new int[textByte.length/publicKey.length];
+            for(int i = 0; i < textByte.length/publicKey.length; i++) {
+                for (int j = 0; j < publicKey.length; j++) {
+                    if(textByte[i*publicKey.length + j] == 1)
+                        tmp += publicKey[j];
+                }
+                cipherText[i] = tmp;
+                tmp = 0;
             }
-            cipherText[i] = tmp;
-            tmp = 0;
+        }
+        else {
+            cipherText = new int[] {0};
         }
     }
 
@@ -61,11 +68,26 @@ public class Knapsack {
         return 0;
     }
 
+    // TODO
+    //  Sprawdzenie czy dwie liczby sa wzglednie pierwsze
+    public boolean algorithmEuclidean(int a, int b) { return false; }
 
     public void generatePublicKey() {
         for (int i = 0; i < privateKey.length; i++) {
             publicKey[i] = (privateKey[i] * n) % m;
         }
+    }
+
+    public boolean checkSuperIncreasing() {
+        for (int i = 0; i < privateKey.length - 2; i++) {
+            if (privateKey[i+1] + privateKey[i] >= privateKey[i+2])
+                return false;
+        }
+        return true;
+    }
+
+    public boolean isSuperIncreasing() {
+        return superIncreasing;
     }
 
     public byte[] getDecipherText() {

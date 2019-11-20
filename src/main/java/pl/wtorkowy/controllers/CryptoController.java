@@ -88,7 +88,10 @@ public class CryptoController {
         publicKey.setText(knapsack.getPublicKey());
         knapsack.encrypt(tmpText);
         cipherTextTab = knapsack.getCipherText();
-        cipherText.setText(knapsack.getCipherTextString());
+        if(knapsack.isSuperIncreasing())
+            cipherText.setText(knapsack.getCipherTextString());
+        else
+            cipherText.setText("Private Key isn't superincreasing !");
     }
 
     @FXML

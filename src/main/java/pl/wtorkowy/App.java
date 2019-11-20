@@ -22,21 +22,5 @@ public class App extends Application {
 
     public static void main(String[] args) {
         launch();
-//        Knapsack knapsack = new Knapsack();
-//        knapsack.generatePublicKey();
-//        int[] tab = knapsack.getPublicKey();
-//        for (int i: tab) {
-//            System.out.println(i);
-//        }
-//        knapsack.encrypt();
-//        tab = knapsack.getCipherText();
-//        for (int i: tab) {
-//            System.out.println(i);
-//        }
-//        knapsack.decrypt();
-//        byte[] tabByte = knapsack.getDecipherText();
-//        for(byte b: tabByte) {
-//            System.out.print(b);
-//        }
     }
 }
