@@ -1,6 +1,7 @@
 package pl.wtorkowy.crypt;
 
 import pl.wtorkowy.cast.ToTab;
+import pl.wtorkowy.crypt.Euklides;
 
 import java.util.Arrays;
 
@@ -21,6 +22,9 @@ public class Knapsack {
         reverseN = reverseN(n, m);
         generatePublicKey();
         superIncreasing = checkSuperIncreasing();
+        //TODO
+        // Przypisac do zmiennej zebv mozna bylo sprawdzac
+        Euklides.isRelativelyPrime(m, n);
     }
 
     public void encrypt(byte[] textByte) {
@@ -67,10 +71,6 @@ public class Knapsack {
         }
         return 0;
     }
-
-    // TODO
-    //  Sprawdzenie czy dwie liczby sa wzglednie pierwsze
-    public boolean algorithmEuclidean(int a, int b) { return false; }
 
     public void generatePublicKey() {
         for (int i = 0; i < privateKey.length; i++) {
