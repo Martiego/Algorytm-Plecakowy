@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import pl.wtorkowy.crypt.BigInt;
 import pl.wtorkowy.crypt.Knapsack;
 
 public class App extends Application {
@@ -22,5 +23,8 @@ public class App extends Application {
 
     public static void main(String[] args) {
         launch();
+        BigInt a = new BigInt("20000768678678700000");
+        BigInt b = new BigInt("800000000000000000");
+        System.out.println(a.add(b));
     }
 }

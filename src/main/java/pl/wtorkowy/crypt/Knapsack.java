@@ -21,10 +21,8 @@ public class Knapsack {
         this.m = m;
         reverseN = reverseN(n, m);
         generatePublicKey();
-        superIncreasing = checkSuperIncreasing();
-        //TODO
-        // Przypisac do zmiennej zebv mozna bylo sprawdzac
-        Euklides.isRelativelyPrime(m, n);
+        if(checkSuperIncreasing() && Euklides.isRelativelyPrime(m, n))
+            superIncreasing = true;
     }
 
     public void encrypt(byte[] textByte) {
@@ -79,8 +77,11 @@ public class Knapsack {
     }
 
     public boolean checkSuperIncreasing() {
-        for (int i = 0; i < privateKey.length - 2; i++) {
-            if (privateKey[i+1] + privateKey[i] >= privateKey[i+2])
+        int tmp = 0;
+        for (int value : privateKey) {
+            if (value > tmp)
+                tmp += value;
+            else
                 return false;
         }
         return true;
