@@ -23,8 +23,8 @@ public class App extends Application {
 
     public static void main(String[] args) {
         launch();
-        BigInt a = new BigInt("20000768678678700000");
-        BigInt b = new BigInt("800000000000000000");
-        System.out.println(a.add(b));
+        BigInt a = new BigInt("100000");
+        BigInt b = new BigInt("3465745574799789789798979876666666666666666645555554657746");
+        System.out.println(a.multiply(b));
     }
 }

@@ -131,4 +131,15 @@ public class ToTab {
         return result;
     }
 
+    public static byte[] reverse(byte[] tab) {
+        byte[] result = new byte[tab.length];
+
+        for (int i = 0; i < tab.length; i++) {
+            result[tab.length - 1 - i] = tab[i];
+        }
+
+        return result;
+    }
+
+
 }

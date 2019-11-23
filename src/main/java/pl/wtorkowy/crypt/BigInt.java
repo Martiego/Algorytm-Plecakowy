@@ -1,6 +1,5 @@
 package pl.wtorkowy.crypt;
 
-
 /**
  *  Bardzo przyjemna klasa, po prostu liczby są zapisywane do tablicy byteow i symulujemy tak, żeby
  *  można było się nimi posługiwać jak normalnymi liczbami. Dla naszego ułatwienia liczby są zapisywane
@@ -19,11 +18,12 @@ public class BigInt {
     }
 
     public BigInt(byte[] val) {
-        number = val;
+
+        number = trimZero(val);
     }
 
     public BigInt add(BigInt val) {
-        byte[] tmpTab = compare(this, val);
+        byte[] tmpTab = getHigher(this, val);
         byte[] result = new byte[Math.max(number.length, val.number.length)+1];
 
         if(number.length > val.number.length)
@@ -50,11 +50,110 @@ public class BigInt {
         return new BigInt(result);
     }
 
-    private byte[] compare(BigInt a, BigInt b) {
-        if(a.getNumber().length > b.getNumber().length)
-            return a.getNumber();
+    public BigInt subtract(BigInt val) {
+        int tmp = 1;
+
+        if(number.length < val.number.length) {
+            return new BigInt("-");
+        }
+
+        if (number.length == val.number.length && !isHigher(this, val)) {
+            return new BigInt("-");
+        }
+
+        for (int i = 0; i < val.number.length; i++) {
+            if(number[i] - val.number[i] < 0) {
+                while(number[i+tmp] == 0) {
+                    tmp++;
+                }
+                number[i+tmp] = (byte) (number[i+tmp] - 1);
+                while (tmp != 0) {
+                    tmp--;
+                    if(tmp == 0)
+                        number[i+tmp] = (byte) (number[i+tmp] + 10);
+                    else
+                        number[i+tmp] = (byte) (number[i+tmp] + 9);
+                }
+
+                number[i] = (byte) (number[i] - val.number[i]);
+            }
+            else {
+                number[i] = (byte) (number[i] - val.number[i]);
+            }
+        }
+
+        return new BigInt(number);
+    }
+
+    public BigInt multiply(BigInt val) {
+        BigInt tmpInt = new BigInt("1");
+        BigInt lowerInt = getLowerInt(this, val);
+        BigInt result = getHigherInt(this, val);
+        BigInt tmp = getHigherInt(this, val);
+
+        while(!lowerInt.toString().equals("1")) {
+            result = result.add(tmp);
+
+            lowerInt = lowerInt.subtract(tmpInt);
+            System.out.println(lowerInt);
+        }
+
+        return result;
+    }
+
+
+    //TODO
+    // operacja modulo
+    public BigInt mod() { return new BigInt("-"); }
+
+    private byte[] getHigher(BigInt a, BigInt b) {
+        if(a.number.length > b.number.length)
+            return a.number;
         else
-            return b.getNumber();
+            return b.number;
+    }
+
+    private BigInt getHigherInt(BigInt a, BigInt b) {
+        if(a.number.length > b.number.length)
+            return a;
+        else
+            return b;
+    }
+
+    private BigInt getLowerInt(BigInt a, BigInt b) {
+        if(a.number.length < b.number.length)
+            return a;
+        else
+            return b;
+    }
+
+    private boolean isHigher(BigInt a, BigInt b) {
+        if (a.number[0] < b.number[0])
+            return false;
+
+        for (int i = 1; i < a.number.length; i++) {
+            if(a.number[i] < b.number[i])
+                return false;
+        }
+
+        return true;
+    }
+
+    private byte[] trimZero(byte[] number) {
+        int tmp = number.length - 1;
+        while(number[tmp] == 0) {
+            tmp--;
+            if(tmp <= 0)
+                return new byte[] { number[0] };
+        }
+
+        byte[] result = new byte[tmp+1];
+
+        for (int i = 0; i < result.length; i++) {
+            result[i] = number[i];
+        }
+
+        return result;
     }
 
 
@@ -67,10 +166,7 @@ public class BigInt {
         String text = "";
         int len = number.length - 1;
 
-        if(number[len] != 0)
-            text += number[len];
-
-        for (int i = len - 1; i >= 0; i--) {
+        for (int i = len; i >= 0; i--) {
             text += number[i];
         }
 
