@@ -27,7 +27,7 @@ public class BigInt {
         byte[] result = new byte[Math.max(number.length, val.number.length)+1];
 
         if(number.length > val.number.length)
-            System.arraycopy(val.getNumber(), 0, result, 0, val.getNumber().length);
+            System.arraycopy(val.number, 0, result, 0, val.number.length);
         else
             System.arraycopy(number, 0, result, 0, number.length);
 
@@ -76,6 +76,7 @@ public class BigInt {
                 }
 
                 number[i] = (byte) (number[i] - val.number[i]);
+                tmp = 1;
             }
             else {
                 number[i] = (byte) (number[i] - val.number[i]);
@@ -86,6 +87,27 @@ public class BigInt {
     }
 
     public BigInt multiply(BigInt val) {
+        BigInt higherInt = getHigherInt(this, val);
+        BigInt lowerInt = getLowerInt(this, val);
+        BigInt[] multiplyTab = new BigInt[lowerInt.number.length];
+        BigInt result = new BigInt("0");
+
+        multiplyTab[0] = higherInt;
+        for (int i = 1; i < multiplyTab.length; i++) {
+            multiplyTab[i] = multiplyTab[i-1].multiplyHelper(new BigInt("10"));
+        }
+
+        for (int i = 0; i < multiplyTab.length; i++) {
+            for (int j = 0; j < lowerInt.number[i]; j++) {
+                result = result.add(multiplyTab[i]);
+            }
+        }
+
+        return result;
+
+    }
+
+    private BigInt multiplyHelper(BigInt val) {
         BigInt tmpInt = new BigInt("1");
         BigInt lowerInt = getLowerInt(this, val);
         BigInt result = getHigherInt(this, val);
@@ -95,16 +117,22 @@ public class BigInt {
             result = result.add(tmp);
 
             lowerInt = lowerInt.subtract(tmpInt);
-            System.out.println(lowerInt);
         }
 
         return result;
     }
 
+    public BigInt mod(BigInt val) {
+        BigInt tmp = this;
+        BigInt result = new BigInt("0");
 
-    //TODO
-    // operacja modulo
-    public BigInt mod() { return new BigInt("-"); }
+        while(!tmp.toString().equals("-1")) {
+            result = tmp;
+            tmp = tmp.subtract(val);
+        }
+
+        return result;
+    }
 
     private byte[] getHigher(BigInt a, BigInt b) {
         if(a.number.length > b.number.length)
@@ -116,6 +144,12 @@ public class BigInt {
     private BigInt getHigherInt(BigInt a, BigInt b) {
         if(a.number.length > b.number.length)
             return a;
+        else if(a.number.length == b.number.length) {
+            if(isHigher(a, b))
+                return a;
+            else
+                return b;
+        }
         else
             return b;
     }
@@ -123,6 +157,12 @@ public class BigInt {
     private BigInt getLowerInt(BigInt a, BigInt b) {
         if(a.number.length < b.number.length)
             return a;
+        else if(a.number.length == b.number.length){
+            if(!isHigher(a,b))
+                return a;
+            else
+                return b;
+        }
         else
             return b;
     }
@@ -154,11 +194,6 @@ public class BigInt {
         }
 
         return result;
-    }
-
-
-    public byte[] getNumber() {
-        return number;
     }
 
     @Override

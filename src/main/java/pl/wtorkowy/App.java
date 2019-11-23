@@ -6,7 +6,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import pl.wtorkowy.crypt.BigInt;
-import pl.wtorkowy.crypt.Knapsack;
 
 public class App extends Application {
     @Override
@@ -23,8 +22,9 @@ public class App extends Application {
 
     public static void main(String[] args) {
         launch();
-        BigInt a = new BigInt("100000");
-        BigInt b = new BigInt("3465745574799789789798979876666666666666666645555554657746");
-        System.out.println(a.multiply(b));
+        BigInt c = new BigInt("576998766797896796975676985437367537463547374565642542657654587686585767452640");
+        BigInt a = new BigInt("5197420");
+        BigInt b = new BigInt("4324232342342342323753457343754376537656587385685638563568836538653856835638686568357383857588750");
+        System.out.println(c.mod(b));
     }
 }
