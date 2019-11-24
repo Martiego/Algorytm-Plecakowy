@@ -34,23 +34,14 @@ public class Generator {
 
         m = privateKey;
         tmp = String.valueOf((rand.nextInt(9) + 1));
-        for (int i = 0; i < m.getNumber().length*9/10 ; i++) {
+        for (int i = 0; i < m.getNumber().length*3/5 ; i++) {
             tmp += rand.nextInt(10);
         }
         n = new BigInt(tmp);
 
-        System.out.println(m);
-        System.out.println(n);
-
         while (!Euklides.isRelativelyPrime(m ,n)) {
-            System.out.println("n1:" + n);
             n = n.add(new BigInt(numbers[rand.nextInt(numbers.length)]));
-            System.out.println("n2: " + n);
         }
-
-        System.out.println("m: " + m);
-        System.out.println("n: " + n);
-
 
         return result;
     }

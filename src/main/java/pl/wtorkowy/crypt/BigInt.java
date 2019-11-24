@@ -129,6 +129,7 @@ public class BigInt {
         BigInt tmp;
         BigInt tmp2;
         BigInt result = new BigInt("0");
+        BigInt ten = new BigInt("10");
 
         if(this.isEqual(val)) {
             return new BigInt("0");
@@ -136,19 +137,49 @@ public class BigInt {
         else if(isHigher(this, val)) {
             tmp = this;
             tmp2 = val;
+
+            for (int i = 1; i < (tmp.number.length - val.number.length) - 1; i++) {
+                tmp2 = tmp2.multiply(ten);
+            }
+//             while(!ten.toString().equals("0")) {
+//                 if (tmp2.multiply(ten).isLess(tmp))
+//                     tmp2 = tmp2.multiply(ten);
+//                 else
+//                     ten = ten.subtract(new BigInt("1"));
+//             }
+
+
+            while(!tmp.toString().equals("-1")) {
+                result = tmp;
+                tmp = tmp.subtract(tmp2);
+            }
         }
         else {
-            tmp = val;
-            tmp2 = this;
+            return this;
         }
 
-        while(!tmp.toString().equals("-1")) {
-            result = tmp;
-            tmp = tmp.subtract(tmp2);
-        }
 
         return result;
     }
+
+//    public BigInt divide(BigInt val) {
+//        BigInt result = new BigInt("1");
+//        BigInt one = new BigInt("1");
+//        BigInt tmp = this;
+//
+//        for (int i = 0; i < (tmp.number.length - val.number.length) - 2; i++) {
+//            result = result.multiply(new BigInt("10"));
+//        }
+//
+//        while(!tmp.toString().equals("-1")) {
+//            tmp = tmp.subtract(val);
+//            result = result.add(one);
+//        }
+//
+//        result.subtract(one);
+//
+//        return result;
+//}
 
     private byte[] getHigher(BigInt a, BigInt b) {
         if(a.number.length > b.number.length)
@@ -199,6 +230,20 @@ public class BigInt {
 
         return true;
     }
+
+    public boolean isLess(BigInt val) {
+        if(this.number.length < val.number.length)
+            return true;
+        else if(this.number.length == val.number.length) {
+            if(isHigher(this, val))
+                return false;
+            else
+                return true;
+        }
+        else
+            return false;
+    }
+
     public boolean isEqual(BigInt val) {
         if(number.length == val.number.length) {
             for (int i = 0; i < number.length; i++) {
