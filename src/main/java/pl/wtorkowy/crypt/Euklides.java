@@ -1,22 +1,25 @@
 package pl.wtorkowy.crypt;
 
-//m has to be greater than n
 public class Euklides {
 
-    private static int algorithmEuclidean(int m, int n) {
+    private static BigInt algorithmEuclidean(BigInt m, BigInt n) {
+        BigInt temp;
 
-        int temp;
-
-        while (n != 0 ) {
-            temp = m%n;
+        while (!n.toString().equals("0")) {
+            temp = m.mod(n);
             m = n;
             n = temp;
         }
-
         return m;
     }
 
-    public static boolean isRelativelyPrime (int m, int n){
-        return algorithmEuclidean(m, n) == 1;
+    public static boolean isRelativelyPrime (BigInt m, BigInt n){
+        if (algorithmEuclidean(m, n).toString().equals("1")) {
+            return true;
+        }
+        else {
+            return false;
+        }
+
     }
 }

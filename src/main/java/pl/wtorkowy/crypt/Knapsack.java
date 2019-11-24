@@ -21,8 +21,8 @@ public class Knapsack {
         this.m = m;
         reverseN = reverseN(n, m);
         generatePublicKey();
-        if(checkSuperIncreasing() && Euklides.isRelativelyPrime(m, n))
-            superIncreasing = true;
+//        if(checkSuperIncreasing() && Euklides.isRelativelyPrime(m, n))
+//            superIncreasing = true;
     }
 
     public void encrypt(byte[] textByte) {
