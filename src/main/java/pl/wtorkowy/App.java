@@ -54,11 +54,17 @@ public class App extends Application {
 //        BigInt b = new BigInt("7");
 //        System.out.println(a.mod(b));
 
-        KnapsackBigInt knapsackBigInt = new KnapsackBigInt(20);
+        KnapsackBigInt knapsackBigInt = new KnapsackBigInt(200);
         System.out.println(Arrays.toString(knapsackBigInt.getPrivateKey()));
-        BigInt n = new BigInt("3223235333333339");
-        BigInt m = new BigInt("120");
+        BigInt n = new BigInt("15693450629650666543060052115203375904150662438850930791207123");
+        BigInt m = new BigInt("11885405293927357298314366384816968795");
+        BigInt c = new BigInt("31019220699608210673160208460103681490124122934789111350190419");
         System.out.println(knapsackBigInt.getReverseN());
+        System.out.println(knapsackBigInt.getN());
+        System.out.println(knapsackBigInt.getM());
+        System.out.println((n.multiply(m)).mod(c));
+       // System.out.println(knapsackBigInt.reverseN(m, n));
+//        System.out.println(knapsackBigInt.getReverseN());
 //        BigInt reverseN = knapsackBigInt.reverseN(n,m);
 //        System.out.println(reverseN);
     }
