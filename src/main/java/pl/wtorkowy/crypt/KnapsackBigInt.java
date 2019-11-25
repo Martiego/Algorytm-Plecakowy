@@ -25,17 +25,17 @@ public class KnapsackBigInt {
         return publicKey;
     }
 
-    private BigInt reverseN(BigInt n, BigInt m) {
+    public BigInt reverseN(BigInt n, BigInt m) {
         BigInt i = new BigInt("0");
         BigInt one = new BigInt("1");
         BigInt tmp;
-        System.out.println("N: " + n);
+//        System.out.println("N: " + n);
 
         while (!i.isEqual(m)) {
             tmp = n.multiply(i);
-            System.out.println("N*i: " + tmp + " * " + i);
+//            System.out.println("N*i: " + tmp + " * " + i);
             tmp = tmp.mod(m);
-            System.out.println("tmp mod: " + tmp);
+//            System.out.println("tmp mod: " + tmp);
             if(tmp.isEqual(one)) {
                 return i;
             }
@@ -65,11 +65,14 @@ public class KnapsackBigInt {
 //            q = w.divide(z);
 //            u = u.subtract(q.multiply(x));
 //            w = w.subtract(q.multiply(z));
+//            //System.out.println("x: " + x);
 //        }
 //
 //        if(z.isEqual(one)) {
 //            if(x.isLess(zero))
 //                x = x.add(m);
+//
+//            return x;
 //        }
 //        return x;
     }

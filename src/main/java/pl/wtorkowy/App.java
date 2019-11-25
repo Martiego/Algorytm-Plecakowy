@@ -17,18 +17,18 @@ public class App extends Application {
         StackPane stackPane = loader.load();
         Scene scene = new Scene(stackPane, 800, 500);
 
-        primaryStage.setTitle("DES");
+        primaryStage.setTitle("Algorytm Plecakowy");
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
     }
 
     public static void main(String[] args) {
-        launch();
-        //BigInt c = new BigInt("576998766797896796975676985437367537463547374565642542657654587686585767452640");
-//        BigInt a = new BigInt("11728247571947062826625627925435");
-//        BigInt b = new BigInt("69021454330535003428573868087");
-//        System.out.println("mod: " + b.mod(a));
+//        launch();
+//        //BigInt c = new BigInt("576998766797896796975676985437367537463547374565642542657654587686585767452640");
+//        BigInt a = new BigInt("9604");
+//        BigInt b = new BigInt("98");
+//        System.out.println("div: " + a.divide(b));
        // System.out.println(c.mod(b));
 //        Generator generator = new Generator();
 //        BigInt[] bigInts = generator.generate(100);
@@ -43,15 +43,23 @@ public class App extends Application {
 //        System.out.println("a: " + a);
 //        System.out.println(b.subtract(a));
 
-        KnapsackBigInt knapsackBigInt = new KnapsackBigInt(30);
-        System.out.println(Arrays.toString(knapsackBigInt.getPublicKey()));
-        System.out.println(Arrays.toString(knapsackBigInt.getPrivateKey()));
-        System.out.println(knapsackBigInt.getN());
-        System.out.println(knapsackBigInt.getM());
-        System.out.println(knapsackBigInt.getReverseN());
+//        KnapsackBigInt knapsackBigInt = new KnapsackBigInt(30);
+//        System.out.println(Arrays.toString(knapsackBigInt.getPublicKey()));
+//        System.out.println(Arrays.toString(knapsackBigInt.getPrivateKey()));
+//        System.out.println(knapsackBigInt.getN());
+//        System.out.println(knapsackBigInt.getM());
+//        System.out.println(knapsackBigInt.getReverseN());
+//
+//        BigInt a = new BigInt("22");
+//        BigInt b = new BigInt("7");
+//        System.out.println(a.mod(b));
 
-        BigInt a = new BigInt("22");
-        BigInt b = new BigInt("7");
-        System.out.println(a.mod(b));
+        KnapsackBigInt knapsackBigInt = new KnapsackBigInt(20);
+        System.out.println(Arrays.toString(knapsackBigInt.getPrivateKey()));
+        BigInt n = new BigInt("3223235333333339");
+        BigInt m = new BigInt("120");
+        System.out.println(knapsackBigInt.getReverseN());
+//        BigInt reverseN = knapsackBigInt.reverseN(n,m);
+//        System.out.println(reverseN);
     }
 }

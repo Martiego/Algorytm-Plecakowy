@@ -1,7 +1,6 @@
 package pl.wtorkowy.crypt;
 
 import pl.wtorkowy.cast.ToTab;
-import pl.wtorkowy.crypt.Euklides;
 
 import java.util.Arrays;
 

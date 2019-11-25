@@ -128,8 +128,8 @@ public class BigInt {
     public BigInt mod(BigInt val) {
         BigInt tmp;
         BigInt tmp2;
-        BigInt result = new BigInt("0");
         BigInt ten = new BigInt("10");
+
 
         if(this.isEqual(val)) {
             return new BigInt("0");
@@ -138,48 +138,64 @@ public class BigInt {
             tmp = this;
             tmp2 = val;
 
-            for (int i = 1; i < (tmp.number.length - val.number.length) - 1; i++) {
-                tmp2 = tmp2.multiply(ten);
-            }
-//             while(!ten.toString().equals("0")) {
-//                 if (tmp2.multiply(ten).isLess(tmp))
-//                     tmp2 = tmp2.multiply(ten);
-//                 else
-//                     ten = ten.subtract(new BigInt("1"));
-//             }
+            BigInt[] multiplyTab = new BigInt[(tmp.number.length - tmp2.number.length)+1];
 
-
-            while(!tmp.toString().equals("-1")) {
-                result = tmp;
-                tmp = tmp.subtract(tmp2);
+            multiplyTab[0] = tmp2;
+            for (int i = 1; i < multiplyTab.length; i++) {
+                multiplyTab[i] = multiplyTab[i-1].multiply(ten);
             }
+
+            for (int i = multiplyTab.length - 1; i >= 0; i--) {
+                while(multiplyTab[i].isLessEqual(tmp)) {
+                    tmp = tmp.subtract(multiplyTab[i]);
+                }
+            }
+
+            return tmp;
         }
         else {
             return this;
         }
 
-
-        return result;
     }
 
-//    public BigInt divide(BigInt val) {
-//        BigInt result = new BigInt("1");
-//        BigInt one = new BigInt("1");
-//        BigInt tmp = this;
-//
-//        for (int i = 0; i < (tmp.number.length - val.number.length) - 2; i++) {
-//            result = result.multiply(new BigInt("10"));
-//        }
-//
-//        while(!tmp.toString().equals("-1")) {
-//            tmp = tmp.subtract(val);
-//            result = result.add(one);
-//        }
-//
-//        result.subtract(one);
-//
-//        return result;
-//}
+    public BigInt divide(BigInt val) {
+        BigInt tmp;
+        BigInt tmp2;
+        BigInt ten = new BigInt("10");
+        BigInt result = new BigInt("0");
+
+
+        if(this.isEqual(val)) {
+            return new BigInt("1");
+        }
+        else if(isHigher(this, val)) {
+            tmp = this;
+            tmp2 = val;
+            BigInt[] multiplyTab = new BigInt[(tmp.number.length - tmp2.number.length)+1];
+            BigInt[] tmpTab = new BigInt[(tmp.number.length - tmp2.number.length)+1];
+
+            multiplyTab[0] = tmp2;
+            tmpTab[0] = new BigInt("1");
+            for (int i = 1; i < multiplyTab.length; i++) {
+                multiplyTab[i] = multiplyTab[i-1].multiply(ten);
+                tmpTab[i] = tmpTab[i-1].multiply(ten);
+            }
+
+            for (int i = multiplyTab.length - 1; i >= 0; i--) {
+                while(multiplyTab[i].isLessEqual(tmp)) {
+                    tmp = tmp.subtract(multiplyTab[i]);
+                    result = result.add(tmpTab[i]);
+                }
+            }
+
+            return result;
+        }
+        else {
+            return new BigInt("0");
+        }
+
+    }
 
     private byte[] getHigher(BigInt a, BigInt b) {
         if(a.number.length > b.number.length)
@@ -236,6 +252,21 @@ public class BigInt {
             return true;
         else if(this.number.length == val.number.length) {
             if(isHigher(this, val))
+                return false;
+            else
+                return true;
+        }
+        else
+            return false;
+    }
+
+    public boolean isLessEqual(BigInt val) {
+        if(this.number.length < val.number.length)
+            return true;
+        else if(this.number.length == val.number.length) {
+            if(this.isEqual(val))
+                return true;
+            else if(isHigher(this, val))
                 return false;
             else
                 return true;
