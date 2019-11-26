@@ -8,15 +8,15 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import pl.wtorkowy.cast.ToTab;
+import pl.wtorkowy.crypt.BigInt;
 import pl.wtorkowy.crypt.Knapsack;
+import pl.wtorkowy.crypt.KnapsackBigInt;
 
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class CryptoController {
     @FXML
@@ -25,23 +25,25 @@ public class CryptoController {
     private TextArea text;
     @FXML
     private Label cipherText;
+    @FXML
+    private TextField times;
 
     @FXML
     private TextField key;
     @FXML
-    private TextField keyFile;
-    @FXML
     private TextField n;
     @FXML
-    private TextField nFile;
-    @FXML
     private TextField m;
-    @FXML
-    private TextField mFile;
     @FXML
     private Label publicKey;
     @FXML
     private Label publicKeyFile;
+    @FXML
+    private Label privateKeyFile;
+    @FXML
+    private Label nFile;
+    @FXML
+    private Label mFile;
     @FXML
     private TextField nameFile;
 
@@ -49,6 +51,7 @@ public class CryptoController {
     private ProgressBar progressBar;
     private double progress = 0;
     private double tmpProgress;
+    private KnapsackBigInt knapsackBigInt;
 
     @FXML
     private File file;
@@ -124,6 +127,15 @@ public class CryptoController {
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(cipherText.getText()), null);
     }
 
+    @FXML
+    public void generate() {
+        knapsackBigInt = new KnapsackBigInt(Integer.parseInt(times.getText()));
+        publicKeyFile.setText(Arrays.toString(knapsackBigInt.getPublicKey()));
+        privateKeyFile.setText(Arrays.toString(knapsackBigInt.getPrivateKey()));
+        nFile.setText(knapsackBigInt.getN().toString());
+        mFile.setText(knapsackBigInt.getM().toString());
+    }
+
     public class EncryptFile implements Runnable {
 
         @Override
@@ -133,42 +145,50 @@ public class CryptoController {
                 FileInputStream fileInputStream = new FileInputStream(file);
 
                 String name = ToTab.replace(file.getAbsolutePath(), File.separatorChar, nameFile.getText());
-                File newFile = new File(name);
-                newFile.createNewFile();
+                FileWriter newFile = new FileWriter(name);
 
-                FileOutputStream fileOutputStream = new FileOutputStream(newFile);
+                long fileLen = file.length();
+                long times = fileLen;
+                int len = knapsackBigInt.getPublicKey().length/8;
+                while(times%len != 0) {
+                    times++;
+                }
+                int rest = (int) (len - (times - fileLen));
+                int[] tmpInt = new int[len];
+                BigInt[] bigInts;
 
-                int[] privateKey = ToTab.toIntTab(keyFile.getText());
-                Knapsack knapsack = new Knapsack(privateKey, Integer.parseInt(nFile.getText()), Integer.parseInt(mFile.getText()));
-                int[] tmp = new int[(int) file.length()];
-                byte[] tmpByte;
+                tmpProgress = 1.0/(times/len);
 
-                for (int i = 0; i < file.length(); i++) {
-                    tmp[i] = fileInputStream.read();
+                for (int i = 0; i < times/len - 1; i++) {
+                    progressBar.setProgress(progress += tmpProgress);
+                    for (int j = 0; j < len; j++) {
+                        tmpInt[j] = fileInputStream.read();
+                    }
+                    knapsackBigInt.encrypt(ToTab.toByteTab(tmpInt));
+                    bigInts = knapsackBigInt.getCipherText();
+                    for (int j = 0; j < bigInts.length; j++) {
+                        newFile.write(bigInts[j].toString() + "\n");
+                    }
                 }
 
-                tmpByte = ToTab.toByteTab(tmp);
+                if(rest != 0) {
+                    for (int i = 0; i < rest; i++) {
+                        tmpInt[i] = fileInputStream.read();
+                    }
 
-                int times = (int) ((file.length() * 8)/privateKey.length);
-                int rest = (int) (file.length() * 8 - times * privateKey.length);
-                tmpProgress = 1.0/times;
-                // TODO
-                //  No wiec tak, dostajemy za kazdym razem inta, tylko problem jest taki, ze
-                //  Dlugosc inta zalezy od tego jak dlugi jest klucz, wiec gdy jest to 6 to otrzymujemy inta na 6 bitach
-                //  Ale strumien zawsze majac na mysli int ma na mysli 8 bitow ;c
-                //  Tak wiec pliki zawsze sa nadmiarowe
-                //  Wiec kod do wywalenia
+                    for (int i = rest; i < len; i++) {
+                        tmpInt[i] = '\0';
+                    }
 
-                for (int i = 0; i < times; i++) {
-                    knapsack.encrypt(ToTab.cutTab(tmpByte, i * privateKey.length, privateKey.length));
+                    knapsackBigInt.encrypt(ToTab.toByteTab(tmpInt));
+                    bigInts = knapsackBigInt.getCipherText();
 
-                    fileOutputStream.write(knapsack.getCipherTextInt());
+                    for (int i = 0; i < bigInts.length; i++) {
+                        newFile.write(bigInts[i].toString() + "\n");
+                    }
                 }
 
-                byte[] cip = ToTab.cutTab(tmpByte, times*privateKey.length, rest);
-                fileOutputStream.write(ToTab.toInt(cip));
-
-                fileOutputStream.close();
+                newFile.close();
                 fileInputStream.close();
 
                 progress = 0;
@@ -185,19 +205,31 @@ public class CryptoController {
         public void run() {
             try {
                 progressBar.setProgress(progress);
-                FileInputStream fileInputStream = new FileInputStream(file);
 
                 String name = ToTab.replace(file.getAbsolutePath(), File.separatorChar, nameFile.getText());
                 File newFile = new File(name);
                 newFile.createNewFile();
 
+                BigInt[] tmp = new BigInt[1];
+                byte[] decipherByte;
+                int[] decipherInt;
+
+                Scanner in = new Scanner(file);
+
                 FileOutputStream fileOutputStream = new FileOutputStream(newFile);
 
-                // TODO
-                //  Deszyfrowanie cale do zrobienia od nowa ;/
+                while(in.hasNext()) {
+                    progressBar.setProgress(progress += tmpProgress);
+                    tmp[0] = new BigInt(in.next());
+                    knapsackBigInt.decrypt(tmp);
+                    decipherByte = knapsackBigInt.getDecipherText();
+                    decipherInt = ToTab.toIntTab(decipherByte);
+                    for (int i: decipherInt) {
+                        fileOutputStream.write(i);
+                    }
+                }
 
                 fileOutputStream.close();
-                fileInputStream.close();
 
                 progress = 0;
             }

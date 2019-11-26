@@ -14,6 +14,9 @@ public class Generator {
     private BigInt m;
 
     public BigInt[] generate(int times) {
+        while(times%8 != 0)
+            times++;
+
         String tmp = "";
         Random rand = new Random();
         BigInt[] result = new BigInt[times];
