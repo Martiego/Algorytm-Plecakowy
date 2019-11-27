@@ -31,19 +31,21 @@ public class KnapsackBigInt {
     }
 
     public BigInt reverseN(BigInt n, BigInt m) {
-        BigInteger u, w, x, z, q;
-        BigInteger zero = new BigInteger("0");
-        BigInteger one = new BigInteger("1");
+        BigInt u, w, x, z, q;
+        BigInt zero = new BigInt("0");
+        BigInt one = new BigInt("1");
 
+        q = zero;
         u = one;
         x = zero;
-        w = new BigInteger(n.toString());
-        z = new BigInteger(m.toString());
+        w = n;
+        z = m;
+        System.out.println(w);
+        System.out.println(z);
 
 
-        while(w.compareTo(zero) != 0) {
-
-            if(w.compareTo(z) == -1) {
+        while(!w.isEqual(zero)) {
+            if(w.isLess(z)) {
                 q = u;
                 u = x;
                 x = q;
@@ -56,13 +58,14 @@ public class KnapsackBigInt {
             w = w.subtract(q.multiply(z));
         }
 
-        if(z.compareTo(one) == 0) {
-            if(x.compareTo(zero) == -1)
-                x = x.add(new BigInteger(m.toString()));
+        if(z.isEqual(one)) {
+            if(x.isLess(zero)) {
+                x = x.add(m);
+            }
 
-            return new BigInt(x.toString());
+            return x;
         }
-        return new BigInt(x.toString());
+        return x;
     }
 
 
@@ -82,7 +85,6 @@ public class KnapsackBigInt {
     public void decrypt(BigInt[] text) {
         BigInt tmp;
         int length = privateKey.length;
-        byte[] tmpByte = new byte[length];
         decipherText = new byte[length*text.length];
         for(int i = 0; i < text.length; i++) {
             tmp = (text[i].multiply(reverseN)).mod(m);
@@ -96,7 +98,6 @@ public class KnapsackBigInt {
                 }
             }
 
-            //System.arraycopy(tmpByte, 0, decipherText, i * length, length);
         }
     }
 

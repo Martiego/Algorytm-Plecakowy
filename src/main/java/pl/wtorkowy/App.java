@@ -15,7 +15,7 @@ public class App extends Application {
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainScreen.fxml"));
         StackPane stackPane = loader.load();
-        Scene scene = new Scene(stackPane, 800, 500);
+        Scene scene = new Scene(stackPane, 1000, 500);
 
         primaryStage.setTitle("Algorytm Plecakowy");
         primaryStage.setScene(scene);
@@ -24,10 +24,6 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
-//        launch();
-        BigInt a = new BigInt("100", false);
-        BigInt b = new BigInt("1000", false);
-        BigInt c = a.subtract(b);
-        System.out.println(c);
+        launch();
     }
 }

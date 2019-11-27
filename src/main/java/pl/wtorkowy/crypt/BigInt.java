@@ -23,7 +23,6 @@ public class BigInt {
     }
 
     public BigInt(byte[] val) {
-
         number = trimZero(val);
     }
 
@@ -73,34 +72,39 @@ public class BigInt {
     }
 
     public BigInt subtract(BigInt val) {
-        if (this.positive == val.positive) {
-            if(this.positive) {
-                if(this.isHigherEqual(val))
-                    return this.subtractHelper(val, true);
+        BigInt tmpThis = new BigInt(this.number);
+        tmpThis.positive = this.positive;
+        BigInt tmpVal = new BigInt(val.number);
+        tmpVal.positive = val.positive;
+
+        if (tmpThis.positive == tmpVal.positive) {
+            if(tmpThis.positive) {
+                if(tmpThis.isHigherEqual(tmpVal))
+                    return tmpThis.subtractHelper(tmpVal, true);
                 else
-                    return val.subtractHelper(this, false);
+                    return tmpVal.subtractHelper(tmpThis, false);
             }
             else {
-                if(this.isHigherEqual(val)) {
-                    this.positive = true;
-                    val.positive = true;
-                    return this.subtractHelper(val, false);
+                if(tmpThis.isHigherEqual(tmpVal)) {
+                    tmpThis.positive = true;
+                    tmpVal.positive = true;
+                    return this.subtractHelper(tmpVal, false);
                 }
                 else {
-                    this.positive = true;
-                    val.positive = true;
-                    return val.subtractHelper(this, true);
+                    tmpThis.positive = true;
+                    tmpVal.positive = true;
+                    return tmpVal.subtractHelper(tmpThis, true);
                 }
             }
         }
         else {
-            if (this.positive) {
-                val.positive = true;
-                return this.add(val);
+            if (tmpThis.positive) {
+                tmpVal.positive = true;
+                return tmpThis.add(tmpVal);
             }
             else {
-                val.positive = false;
-                return this.add(val);
+                tmpVal.positive = false;
+                return tmpThis.add(tmpVal);
             }
         }
     }
@@ -137,18 +141,10 @@ public class BigInt {
     }
 
     public BigInt multiply(BigInt val) {
-        BigInt higherInt = getHigherInt(this, val);
-        BigInt lowerInt = getLowerInt(this, val);
+        BigInt higherInt = new BigInt(getHigherInt(this, val).number);
+        BigInt lowerInt = new BigInt(getLowerInt(this, val).number);
         BigInt[] multiplyTab = new BigInt[lowerInt.number.length];
         BigInt result = new BigInt("0");
-        boolean positiv = true;
-
-        if((!this.positive && val.positive) || (this.positive && !val.positive))
-            positiv = false;
-
-        higherInt.positive = true;
-        lowerInt.positive = true;
-
 
         multiplyTab[0] = higherInt;
 
@@ -161,7 +157,11 @@ public class BigInt {
                 result = result.add(multiplyTab[i]);
             }
         }
-        result.positive = positiv;
+
+        if((!this.positive && val.positive) || (this.positive && !val.positive))
+            result.positive = false;
+        else
+            result.positive = true;
 
         return result;
     }
@@ -290,6 +290,12 @@ public class BigInt {
     }
 
     private boolean isHigher(BigInt a, BigInt b) {
+        if(a.positive && !b.positive)
+            return true;
+
+        if(!a.positive && b.positive)
+            return false;
+
         if(a.number.length > b.number.length)
             return true;
 
@@ -324,6 +330,12 @@ public class BigInt {
     }
 
     public boolean isLess(BigInt val) {
+        if(this.positive && !val.positive)
+            return false;
+
+        if(!this.positive && val.positive)
+            return true;
+
         if(this.number.length < val.number.length)
             return true;
         else if(this.number.length == val.number.length) {
