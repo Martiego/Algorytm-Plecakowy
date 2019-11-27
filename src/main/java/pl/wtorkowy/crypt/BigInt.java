@@ -1,13 +1,8 @@
 package pl.wtorkowy.crypt;
 
-/**
- *  Bardzo przyjemna klasa, po prostu liczby są zapisywane do tablicy byteow i symulujemy tak, żeby
- *  można było się nimi posługiwać jak normalnymi liczbami. Dla naszego ułatwienia liczby są zapisywane
- *  od końca. Index 0 to ostatnia cyfra. Operacje robione są tak jakby wykonywano je w słupku.
- */
-
 public class BigInt {
     private byte[] number;
+    private boolean positive = true;
 
     public BigInt(String val) {
         number = new byte[val.length()];
@@ -15,6 +10,16 @@ public class BigInt {
         for (int i = 0; i < val.length(); i++) {
             number[i] = (byte) Character.getNumericValue(val.charAt(val.length() - i - 1));
         }
+    }
+
+    public BigInt(String val, boolean positive) {
+        number = new byte[val.length()];
+
+        for (int i = 0; i < val.length(); i++) {
+            number[i] = (byte) Character.getNumericValue(val.charAt(val.length() - i - 1));
+        }
+
+        this.positive = positive;
     }
 
     public BigInt(byte[] val) {
@@ -25,6 +30,17 @@ public class BigInt {
     public BigInt add(BigInt val) {
         byte[] tmpTab = getHigher(this, val);
         byte[] result = new byte[Math.max(number.length, val.number.length)+1];
+        BigInt resultInt;
+
+        if(this.positive && !val.positive) {
+            val.positive = true;
+            return this.subtract(val);
+        }
+
+        if(!this.positive && val.positive) {
+            this.positive = true;
+            return val.subtract(this);
+        }
 
         if(number.length > val.number.length)
             System.arraycopy(val.number, 0, result, 0, val.number.length);
@@ -44,23 +60,54 @@ public class BigInt {
             }
         }
 
-        if(tmp == 1)
+        if(tmp == 1) {
             result[result.length-1] = 1;
+        }
 
-        return new BigInt(result);
+        resultInt = new BigInt(result);
+
+        if(!this.positive && !val.positive)
+            resultInt.positive = false;
+
+        return resultInt;
     }
 
     public BigInt subtract(BigInt val) {
+        if (this.positive == val.positive) {
+            if(this.positive) {
+                if(this.isHigherEqual(val))
+                    return this.subtractHelper(val, true);
+                else
+                    return val.subtractHelper(this, false);
+            }
+            else {
+                if(this.isHigherEqual(val)) {
+                    this.positive = true;
+                    val.positive = true;
+                    return this.subtractHelper(val, false);
+                }
+                else {
+                    this.positive = true;
+                    val.positive = true;
+                    return val.subtractHelper(this, true);
+                }
+            }
+        }
+        else {
+            if (this.positive) {
+                val.positive = true;
+                return this.add(val);
+            }
+            else {
+                val.positive = false;
+                return this.add(val);
+            }
+        }
+    }
+
+    private BigInt subtractHelper(BigInt val, boolean positive) {
+        BigInt tmpInt = new BigInt(this.toString(), positive);
         int tmp = 1;
-        BigInt tmpInt = new BigInt(this.toString());
-
-        if(tmpInt.number.length < val.number.length) {
-            return new BigInt("-");
-        }
-
-        if (tmpInt.number.length == val.number.length && !isHigher(this, val)) {
-            return new BigInt("-");
-        }
 
         for (int i = 0; i < val.number.length; i++) {
             if(tmpInt.number[i] - val.number[i] < 0) {
@@ -94,8 +141,17 @@ public class BigInt {
         BigInt lowerInt = getLowerInt(this, val);
         BigInt[] multiplyTab = new BigInt[lowerInt.number.length];
         BigInt result = new BigInt("0");
+        boolean positiv = true;
+
+        if((!this.positive && val.positive) || (this.positive && !val.positive))
+            positiv = false;
+
+        higherInt.positive = true;
+        lowerInt.positive = true;
+
 
         multiplyTab[0] = higherInt;
+
         for (int i = 1; i < multiplyTab.length; i++) {
             multiplyTab[i] = multiplyTab[i-1].multiplyHelper(new BigInt("10"));
         }
@@ -105,9 +161,9 @@ public class BigInt {
                 result = result.add(multiplyTab[i]);
             }
         }
+        result.positive = positiv;
 
         return result;
-
     }
 
     private BigInt multiplyHelper(BigInt val) {
@@ -189,6 +245,9 @@ public class BigInt {
                 }
             }
 
+            if((!this.positive && val.positive) || (this.positive && !val.positive))
+                result.positive = false;
+
             return result;
         }
         else {
@@ -247,6 +306,23 @@ public class BigInt {
         return true;
     }
 
+    private boolean isHigherEqual(BigInt val) {
+        if(this.number.length > val.number.length)
+            return true;
+
+        if(this.number.length < val.number.length)
+            return false;
+
+        for (int i = this.number.length - 1; i >= 0; i--) {
+            if(this.number[i] < val.number[i])
+                return false;
+            else if(this.number[i] > val.number[i])
+                return true;
+        }
+
+        return true;
+    }
+
     public boolean isLess(BigInt val) {
         if(this.number.length < val.number.length)
             return true;
@@ -287,6 +363,10 @@ public class BigInt {
         return false;
     }
 
+    public boolean isPositive() {
+        return positive;
+    }
+
     private byte[] trimZero(byte[] number) {
         int tmp = number.length - 1;
         while(number[tmp] == 0) {
@@ -311,6 +391,9 @@ public class BigInt {
     @Override
     public String toString() {
         String text = "";
+        if(!positive)
+            text += "-";
+
         int len = number.length - 1;
 
         for (int i = len; i >= 0; i--) {
