@@ -24,6 +24,7 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
+        //ewrewrwe
 //        launch();
 //        //BigInt c = new BigInt("576998766797896796975676985437367537463547374565642542657654587686585767452640");
 //        BigInt a = new BigInt("9604");
