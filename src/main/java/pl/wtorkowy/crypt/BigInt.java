@@ -94,7 +94,7 @@ public class BigInt {
                 if(tmpThis.isHigherEqual(tmpVal)) {
                     tmpThis.positive = true;
                     tmpVal.positive = true;
-                    return this.subtractHelper(tmpVal, false);
+                    return tmpThis.subtractHelper(tmpVal, false);
                 }
                 else {
                     tmpThis.positive = true;
