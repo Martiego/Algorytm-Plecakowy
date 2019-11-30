@@ -40,8 +40,6 @@ public class KnapsackBigInt {
         x = zero;
         w = n;
         z = m;
-        System.out.println(w);
-        System.out.println(z);
 
 
         while(!w.isEqual(zero)) {

@@ -29,16 +29,22 @@ public class BigInt {
     public BigInt add(BigInt val) {
         byte[] tmpTab = getHigher(this, val);
         byte[] result = new byte[Math.max(number.length, val.number.length)+1];
+
+        BigInt tmpThis = new BigInt(this.number);
+        tmpThis.positive = this.positive;
+        BigInt tmpVal = new BigInt(val.number);
+        tmpVal.positive = val.positive;
+
         BigInt resultInt;
 
-        if(this.positive && !val.positive) {
-            val.positive = true;
-            return this.subtract(val);
+        if(tmpThis.positive && !tmpVal.positive) {
+            tmpVal.positive = true;
+            return tmpThis.subtract(tmpVal);
         }
 
         if(!this.positive && val.positive) {
-            this.positive = true;
-            return val.subtract(this);
+            tmpThis.positive = true;
+            return tmpVal.subtract(tmpThis);
         }
 
         if(number.length > val.number.length)
@@ -377,6 +383,10 @@ public class BigInt {
 
     public boolean isPositive() {
         return positive;
+    }
+
+    public void setPositive(boolean positive) {
+        this.positive = positive;
     }
 
     private byte[] trimZero(byte[] number) {
