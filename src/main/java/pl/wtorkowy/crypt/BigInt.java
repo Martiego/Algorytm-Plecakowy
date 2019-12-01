@@ -164,7 +164,7 @@ public class BigInt {
             }
         }
 
-        if((!this.positive && val.positive) || (this.positive && !val.positive))
+        if(this.positive != val.positive)
             result.positive = false;
         else
             result.positive = true;
@@ -251,7 +251,7 @@ public class BigInt {
                 }
             }
 
-            if((!this.positive && val.positive) || (this.positive && !val.positive))
+            if(this.positive != val.positive)
                 result.positive = false;
 
             return result;

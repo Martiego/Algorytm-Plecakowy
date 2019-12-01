@@ -1,7 +1,5 @@
 package pl.wtorkowy.crypt;
 
-import java.math.BigInteger;
-
 public class KnapsackBigInt {
     private BigInt[] privateKey;
     private BigInt[] publicKey;

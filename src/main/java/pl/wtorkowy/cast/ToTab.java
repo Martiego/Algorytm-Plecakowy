@@ -31,7 +31,7 @@ public class ToTab {
         return result;
     }
 
-    public static int[] toIntegerTab(char[] block) {
+    public static int[] toIntTab(char[] block) {
         int[] blockInt = new int[block.length];
         for (int i = 0; i < block.length; i++) { blockInt[i] = block[i]; }
 
@@ -52,7 +52,7 @@ public class ToTab {
     }
 
     public static byte[] toByteTab(char[] block) {
-        int[] tmp = toIntegerTab(block);
+        int[] tmp = toIntTab(block);
 
         return toByteTab(tmp);
     }
